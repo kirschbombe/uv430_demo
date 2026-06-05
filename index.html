@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Universal Viewer 4.3.0</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/universalviewer@4.3.0/dist/uv.css" />
-    <script>__webpack_public_path__ = "https://cdn.jsdelivr.net/npm/universalviewer@4.3.0/dist/umd/";</script>
     <script src="https://cdn.jsdelivr.net/npm/universalviewer@4.3.0/dist/umd/UV.js"></script>
     <style>
       * { box-sizing: border-box; }
-      html, body { margin: 0; padding: 0; height: 100%; font-family: sans-serif; }
+      html, body { margin: 0; padding: 0; height: 100%; }
       #uv { position: absolute; top: 0; left: 0; right: 0; bottom: 44px; }
       #options { position: absolute; bottom: 0; left: 0; right: 0; height: 44px; display: flex; gap: 8px; padding: 6px; background: #222; }
       #manifest { flex: 1; padding: 4px; }
@@ -22,39 +21,14 @@
       <input id="manifest" type="text" placeholder="Paste a manifest URL and click Set" />
       <button id="setManifestButton">Set</button>
     </div>
-
     <script>
       var DEFAULT_MANIFEST = "https://raw.githubusercontent.com/kirschbombe/perseguido/main/output/full-run.json";
 
-      // UV 4.x reads manifest from URL params via URLAdapter
-      // If no manifest param in URL, inject the default and reload
-      var params = new URLSearchParams(window.location.search);
-      if (!params.get("manifest") && !params.get("iiifManifestId")) {
-        params.set("manifest", DEFAULT_MANIFEST);
-        window.location.search = params.toString();
-      }
-
-      var urlAdapter = new UV.IIIFURLAdapter();
-      var uv = UV.init("uv", urlAdapter.getInitialData({ debug: false }));
-      urlAdapter.bindTo(uv);
-
-      uv.on("configure", function(data) {
-        data.config.modules = data.config.modules || {};
-        data.config.modules.contentLeftPanel = data.config.modules.contentLeftPanel || { options: {} };
-        data.config.modules.contentLeftPanel.options.defaultToTreeEnabled = true;
-        data.complete(data.config);
-      });
-
-      uv.on("created", function() {
-        uv.publish("openTreeView");
-      });
+      var uv = UV.init("uv", { manifest: DEFAULT_MANIFEST });
 
       document.getElementById("setManifestButton").addEventListener("click", function() {
         var value = document.getElementById("manifest").value.trim();
-        if (value) {
-          params.set("manifest", value);
-          window.location.search = params.toString();
-        }
+        if (value) uv.set({ manifest: value });
       });
     </script>
   </body>
