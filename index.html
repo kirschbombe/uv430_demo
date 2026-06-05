@@ -26,10 +26,17 @@
     <script>
       var DEFAULT_MANIFEST = "https://raw.githubusercontent.com/kirschbombe/perseguido/main/output/full-run.json";
 
-      var uv = UV.init("uv", {
-        iiifManifestId: DEFAULT_MANIFEST,
-        embedded: true
-      });
+      // UV 4.x reads manifest from URL params via URLAdapter
+      // If no manifest param in URL, inject the default and reload
+      var params = new URLSearchParams(window.location.search);
+      if (!params.get("manifest") && !params.get("iiifManifestId")) {
+        params.set("manifest", DEFAULT_MANIFEST);
+        window.location.search = params.toString();
+      }
+
+      var urlAdapter = new UV.IIIFURLAdapter();
+      var uv = UV.init("uv", urlAdapter.getInitialData({ debug: false }));
+      urlAdapter.bindTo(uv);
 
       uv.on("configure", function(data) {
         data.config.modules = data.config.modules || {};
@@ -44,7 +51,10 @@
 
       document.getElementById("setManifestButton").addEventListener("click", function() {
         var value = document.getElementById("manifest").value.trim();
-        if (value) uv.set({ iiifManifestId: value });
+        if (value) {
+          params.set("manifest", value);
+          window.location.search = params.toString();
+        }
       });
     </script>
   </body>
