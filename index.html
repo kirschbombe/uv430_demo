@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Universal Viewer 4.3.0</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/universalviewer@4.3.0/dist/uv.css" />
+    <script src="https://cdn.jsdelivr.net/npm/universalviewer@4.3.0/dist/umd/UV.js"></script>
+    <style>
+      body { margin: 0; padding: 10px; font-family: sans-serif; }
+      #uv { width: 100%; height: 80vh; }
+      #options { margin-top: 10px; display: flex; gap: 8px; }
+      #manifest { flex: 1; padding: 4px; }
+    </style>
+  </head>
+  <body>
+    <div id="uv"></div>
+    <div id="options">
+      <input id="manifest" type="text" placeholder="Paste a manifest URL and click Set" />
+      <button id="setManifestButton">Set</button>
+    </div>
+
+    <script>
+      var DEFAULT_MANIFEST = "https://raw.githubusercontent.com/kirschbombe/perseguido/main/output/full-run.json";
+
+      var uv = UV.init("uv", {
+        manifest: DEFAULT_MANIFEST,
+        embedded: true
+      });
+
+      document.getElementById("setManifestButton").addEventListener("click", function() {
+        var value = document.getElementById("manifest").value.trim();
+        if (value) uv.set({ manifest: value });
+      });
+    </script>
+  </body>
+</html>
