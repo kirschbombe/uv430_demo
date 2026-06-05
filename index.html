@@ -28,6 +28,10 @@
         embedded: true
       });
 
+      uv.on("created", function() {
+        uv.publish("openTreeView");
+      });
+
       document.getElementById("setManifestButton").addEventListener("click", function() {
         var value = document.getElementById("manifest").value.trim();
         if (value) uv.set({ manifest: value });
