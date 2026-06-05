@@ -25,19 +25,14 @@
     <script>
       var DEFAULT_MANIFEST = "https://raw.githubusercontent.com/kirschbombe/perseguido/main/output/full-run.json";
 
-      var urlAdapter = new UV.IIIFURLAdapter();
-
-      var uv = UV.init("uv", urlAdapter.getInitialData({
+      var uv = UV.init("uv", {
         iiifManifestId: DEFAULT_MANIFEST,
-        debug: false
-      }));
-
-      urlAdapter.bindTo(uv);
+        embedded: true
+      });
 
       uv.on("configure", function(data) {
         data.config.modules = data.config.modules || {};
-        data.config.modules.contentLeftPanel = data.config.modules.contentLeftPanel || {};
-        data.config.modules.contentLeftPanel.options = data.config.modules.contentLeftPanel.options || {};
+        data.config.modules.contentLeftPanel = data.config.modules.contentLeftPanel || { options: {} };
         data.config.modules.contentLeftPanel.options.defaultToTreeEnabled = true;
         data.complete(data.config);
       });
@@ -48,7 +43,7 @@
 
       document.getElementById("setManifestButton").addEventListener("click", function() {
         var value = document.getElementById("manifest").value.trim();
-        if (value) uv.set(urlAdapter.getInitialData({ iiifManifestId: value, debug: false }));
+        if (value) uv.set({ iiifManifestId: value });
       });
     </script>
   </body>
